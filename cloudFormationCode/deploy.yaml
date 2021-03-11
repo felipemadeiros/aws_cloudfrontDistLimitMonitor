@@ -2,28 +2,17 @@ Resources:
   LambdaFunction:
     Type: AWS::Lambda::Function
     Properties: 
-      #FunctionName: String
       Description: String
-      Code: ../src/lambda.zip
-        ZipFile: 
+      Code: 
+        S3Bucket: madeiros-bucket
+        S3Key: lambda.zip
       Environment: 
         Variables:
           loglevel: INFO
-      Role: !Ref Role
+      Handler: lambda_function.main
+      Role: !GetAtt Role.Arn
       Runtime: python3.8
       Timeout: 10
-      
-#   EventRule:
-#     Type: AWS::Events::Rule
-#     Properties:
-#       State: "ENABLED"
-#       EventPattern:
-#         source:
-#           - "aws.health"
-#       Targets:
-#         - Arn: "arn:aws:events:us-east-1:${ReceiverAccountID}:event-bus/default"
-#           Id: "id123"
-#           RoleArn: !GetAtt InvokeRole.Arn
 
   Role:
     Type: AWS::IAM::Role
@@ -40,3 +29,43 @@ Resources:
       Path: "/service-role/"
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/CloudFrontReadOnlyAccess
+      Policies:
+        - PolicyName: cloudWatchAccess
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: 'logs:CreateLogGroup'
+                Resource: 'arn:aws:logs:*:*:*'
+              - Effect: Allow
+                Action: 
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                Resource: 'arn:aws:logs:*:*:log-group:*:*'      
+              - Effect: Allow
+                Action: 'cloudwatch:PutMetricData'
+                Resource: '*'      
+                
+  ScheduledRule: 
+    Type: AWS::Events::Rule
+    Properties: 
+      Description: "ScheduledRule"
+      ScheduleExpression: "rate(5 minutes)"
+      State: "ENABLED"
+      Targets: 
+        - 
+          Arn: 
+            Fn::GetAtt: 
+              - "LambdaFunction"
+              - "Arn"
+          Id: "TargetFunctionV1"
+  PermissionForEventsToInvokeLambda: 
+    Type: AWS::Lambda::Permission
+    Properties: 
+      FunctionName: !Ref "LambdaFunction"
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: 
+        Fn::GetAtt: 
+          - "ScheduledRule"
+          - "Arn"

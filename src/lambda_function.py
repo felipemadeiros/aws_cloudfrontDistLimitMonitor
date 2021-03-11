@@ -1,8 +1,21 @@
+import os
 import json
 import boto3
 import logging
 
-logging.basicConfig(format='%(levelname)s %(message)s', level=logging.INFO)
+if 'loglevel' in os.environ:
+    loglevel = os.environ['loglevel']
+else:
+    loglevel = 'INFO'
+
+if len(logging.getLogger().handlers) > 0:
+    # The Lambda environment pre-configures a handler logging to stderr. If a handler is already configured,
+    # `.basicConfig` does not execute. Thus we set the level directly.
+    logging.getLogger().setLevel(loglevel)
+else:
+    logging.basicConfig(format='%(levelname)s %(message)s', level=loglevel)
+
+
 
 def publish_metric(metricValue):
     client = boto3.client('cloudwatch')
@@ -23,8 +36,7 @@ def publish_metric(metricValue):
         ]
     )
 
-#def lambda_handler(event, context):
-def main():
+def main(event, context):
     client = boto3.client('cloudfront')
     response = client.list_distributions(
         MaxItems='10000'
@@ -42,4 +54,4 @@ def main():
 
 # Calling Main     
 if __name__ == '__main__': 
-    main() 
+    main('event', 'context') #gambi para funcionar local e no lambda
