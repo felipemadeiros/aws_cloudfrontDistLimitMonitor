@@ -1,0 +1,42 @@
+Resources:
+  LambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties: 
+      #FunctionName: String
+      Description: String
+      Code: ../src/lambda.zip
+        ZipFile: 
+      Environment: 
+        Variables:
+          loglevel: INFO
+      Role: !Ref Role
+      Runtime: python3.8
+      Timeout: 10
+      
+#   EventRule:
+#     Type: AWS::Events::Rule
+#     Properties:
+#       State: "ENABLED"
+#       EventPattern:
+#         source:
+#           - "aws.health"
+#       Targets:
+#         - Arn: "arn:aws:events:us-east-1:${ReceiverAccountID}:event-bus/default"
+#           Id: "id123"
+#           RoleArn: !GetAtt InvokeRole.Arn
+
+  Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: "/service-role/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudFrontReadOnlyAccess
