@@ -2,6 +2,7 @@ AWSTemplateFormatVersion: "2010-09-09"
 Parameters:
   bucketS3withCode:
     Type: String
+    Description: Bucket with zipfile code
   logLevel:
     Type: String
     AllowedValues:
