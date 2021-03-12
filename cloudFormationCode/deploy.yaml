@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: "2010-09-09"
 Parameters:
   bucketS3withCode:
     Type: String
-    Description: Bucket with zipfile code
+    Description: Bucket S3 with zipfile python code
   logLevel:
     Type: String
     AllowedValues:
@@ -12,9 +12,8 @@ Parameters:
     Default: INFO
   scheduleFrequency:
     Type: Number
-    Description: Inform how frequency in minutes do you want check the CloudFront limits
+    Description: Frequency in minutes do you want check the CloudFront limits
     Default: 1440 # 1 day
-    MinValue: 10
     
 Resources:
   LambdaFunction:
