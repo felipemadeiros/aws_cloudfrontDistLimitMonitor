@@ -14,6 +14,10 @@ Parameters:
     Type: Number
     Description: Frequency in minutes do you want check the CloudFront limits
     Default: 1440 # 1 day
+  Threshold:
+    Type: Number
+    Description: Frequency in minutes do you want check the CloudFront limits
+    Default: 150 # Default limit is 200
     
 Resources:
   LambdaFunction:
@@ -110,5 +114,5 @@ Resources:
         - !Ref SnsTopic
       Period: 300
       Statistic: Average
-      Threshold: 3
+      Threshold: !Ref Threshold
       Unit: Count
