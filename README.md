@@ -8,9 +8,11 @@ Also is available CloudFormation code to deploy the solution.
 
 # Deploy
 Step 1:
+
 Create a ZIP file with lambda_function.py and upload to a Bucket S3
 
 Step 2:
+
 Create a CloudFormation stack to deploy all the services of this solution
 aws cloudformation create-stack --stack-name cloudFrontLimitsMonitor --template-body file://deploy.yaml --parameters file://params.json --capabilities CAPABILITY_IAM
 
