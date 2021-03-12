@@ -1,5 +1,5 @@
 # Description
-This repository contain a code wrote in Python to check how many CloudFront Distribution are deployed in the AWS account.
+This repository contains a code wrote in Python to check how many CloudFront Distribution are deployed in the AWS account.
 Also is available CloudFormation code to deploy the solution.
 
 
