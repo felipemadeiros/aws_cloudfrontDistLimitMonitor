@@ -1,10 +1,27 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  bucketS3withCode:
+    Type: String
+  logLevel:
+    Type: String
+    AllowedValues:
+      - INFO
+      - ERROR
+      - DEBUG
+    Default: INFO
+  scheduleFrequency:
+    Type: Number
+    Description: Inform how frequency in minutes do you want check the CloudFront limits
+    Default: 1440 # 1 day
+    MinValue: 10
+    
 Resources:
   LambdaFunction:
     Type: AWS::Lambda::Function
     Properties: 
       Description: String
       Code: 
-        S3Bucket: madeiros-bucket
+        S3Bucket: !Ref bucketS3withCode
         S3Key: lambda.zip
       Environment: 
         Variables:
@@ -50,7 +67,7 @@ Resources:
     Type: AWS::Events::Rule
     Properties: 
       Description: "ScheduledRule"
-      ScheduleExpression: "rate(5 minutes)"
+      ScheduleExpression: !Sub "rate(${scheduleFrequency} minutes)"
       State: "ENABLED"
       Targets: 
         - 
@@ -69,3 +86,29 @@ Resources:
         Fn::GetAtt: 
           - "ScheduledRule"
           - "Arn"
+  
+  SnsTopic:
+    Type: AWS::SNS::Topic
+
+  CwAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties: 
+      AlarmActions: 
+        - !Ref SnsTopic
+      AlarmDescription: CloudFront Distribution limits
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      DatapointsToAlarm: 1
+      Namespace: CloudFront
+      Dimensions: 
+        - Name: Distribution Metrics
+          Value: Distributions
+      MetricName: resourceCount
+      EvaluationPeriods: 1
+      InsufficientDataActions: 
+        - !Ref SnsTopic
+      OKActions: 
+        - !Ref SnsTopic
+      Period: 300
+      Statistic: Average
+      Threshold: 3
+      Unit: Count

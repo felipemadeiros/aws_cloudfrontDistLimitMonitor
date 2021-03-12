@@ -1,0 +1,14 @@
+[
+  {
+    "ParameterKey": "bucketS3withCode",
+    "ParameterValue": "madeiros-bucket"    
+  },
+  {
+    "ParameterKey": "logLevel",
+    "ParameterValue": "INFO"
+  },
+  {
+    "ParameterKey": "scheduleFrequency",
+    "ParameterValue": "15"
+  }
+]
