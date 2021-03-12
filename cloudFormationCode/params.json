@@ -10,5 +10,9 @@
   {
     "ParameterKey": "scheduleFrequency",
     "ParameterValue": "15"
+  },
+  {
+    "ParameterKey": "Threshold",
+    "ParameterValue": "3"
   }
 ]
