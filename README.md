@@ -21,4 +21,5 @@ aws cloudformation update-stack --stack-name cloudFrontLimitsMonitor --template-
 ```
 
 # To DO
-Pipeline to delivery the python code in the AWS S3 bucket
+- Pipeline to delivery the python code in the AWS S3 bucket.
+- Terraform code to deploy this solution
